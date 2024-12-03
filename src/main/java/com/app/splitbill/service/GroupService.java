@@ -19,8 +19,13 @@ public class GroupService {
         this.groupMemberRepository = groupMemberRepository;
     }
 
-    public AppGroup createGroup(AppGroup appGroup) {
-        return groupRepository.save(appGroup);
+    public String createGroup(AppGroup appGroup) {
+        boolean groupExists = groupRepository.existsByName(appGroup.getName());
+        if (groupExists) {
+            return "Group with this name already exists";
+        }
+        groupRepository.save(appGroup);
+        return "You have created a new group";
     }
 
     public AppGroup getGroupById(Long id) {

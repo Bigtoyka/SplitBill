@@ -1,6 +1,13 @@
 package com.app.splitbill.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Table;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,7 +27,7 @@ public class BillParticipant {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "bill_Item_id", nullable = false)
+    @JoinColumn(name = "bill_item_id", nullable = false)
     private BillItem billItem;
 
     @ManyToOne

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet author="Michael" id="1">
+        <createTable tableName="app_group">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="app_user">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="username" type="varchar(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="email" type="varchar(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="password" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="bill">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="total_amount" type="decimal(19, 2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(255)"/>
+            <column name="date" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="main_payer_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="bill_item">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="bill_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="item_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="item_price" type="decimal(19, 2)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="bill_participant">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="bill_item_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount_owed" type="decimal(19, 2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount_paid" type="decimal(19, 2)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="group_member">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="group_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="payment">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="payer_id" type="bigint"/>
+            <column name="payee_id" type="bigint"/>
+            <column name="amount" type="decimal(19, 2)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Michael" id="2">
+        <addForeignKeyConstraint
+                baseTableName="bill" baseColumnNames="created_by"
+                referencedTableName="app_user" referencedColumnNames="id"
+                constraintName="fk_bill_created_by"/>
+
+        <addForeignKeyConstraint
+                baseTableName="bill" baseColumnNames="main_payer_id"
+                referencedTableName="app_user" referencedColumnNames="id"
+                constraintName="fk_bill_main_payer"/>
+
+        <addForeignKeyConstraint
+                baseTableName="bill_item" baseColumnNames="bill_id"
+                referencedTableName="bill" referencedColumnNames="id"
+                constraintName="fk_bill_item_bill"/>
+
+        <addForeignKeyConstraint
+                baseTableName="bill_participant" baseColumnNames="bill_item_id"
+                referencedTableName="bill_item" referencedColumnNames="id"
+                constraintName="fk_bill_participant_bill_item"/>
+
+        <addForeignKeyConstraint
+                baseTableName="bill_participant" baseColumnNames="user_id"
+                referencedTableName="app_user" referencedColumnNames="id"
+                constraintName="fk_bill_participant_user"/>
+
+        <addForeignKeyConstraint
+                baseTableName="group_member" baseColumnNames="user_id"
+                referencedTableName="app_user" referencedColumnNames="id"
+                constraintName="fk_group_member_user"/>
+
+        <addForeignKeyConstraint
+                baseTableName="group_member" baseColumnNames="group_id"
+                referencedTableName="app_group" referencedColumnNames="id"
+                constraintName="fk_group_member_group"/>
+
+        <addForeignKeyConstraint
+                baseTableName="payment" baseColumnNames="payer_id"
+                referencedTableName="app_user" referencedColumnNames="id"
+                constraintName="fk_payment_payer"/>
+
+        <addForeignKeyConstraint
+                baseTableName="payment" baseColumnNames="payee_id"
+                referencedTableName="app_user" referencedColumnNames="id"
+                constraintName="fk_payment_payee"/>
+    </changeSet>
+</databaseChangeLog>
