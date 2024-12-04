@@ -5,18 +5,19 @@ import com.app.splitbill.model.AppUser;
 import com.app.splitbill.model.GroupMember;
 import com.app.splitbill.repository.GroupMemberRepository;
 import com.app.splitbill.repository.GroupRepository;
+import com.app.splitbill.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class GroupService {
     private final GroupRepository groupRepository;
-    private final UserService userService;
     private final GroupMemberRepository groupMemberRepository;
+    private final UserRepository userRepository;
 
-    public GroupService(GroupRepository groupRepository, UserService userService, GroupMemberRepository groupMemberRepository) {
+    public GroupService(GroupRepository groupRepository, GroupMemberRepository groupMemberRepository, UserRepository userRepository) {
         this.groupRepository = groupRepository;
-        this.userService = userService;
         this.groupMemberRepository = groupMemberRepository;
+        this.userRepository = userRepository;
     }
 
     public String createGroup(AppGroup appGroup) {
@@ -32,9 +33,11 @@ public class GroupService {
         return groupRepository.findById(id).orElse(null);
     }
 
-    public GroupMember addMemberToGroup(Long groupId, Long userId) {
-        AppGroup group = getGroupById(groupId);
-        AppUser user = userService.getUserById(userId);
+    public GroupMember addMemberToGroup(String groupName, String username) {
+        AppGroup group = groupRepository.findByName(groupName)
+                .orElseThrow(() -> new RuntimeException("Group not found"));
+        AppUser user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
         GroupMember groupMember = new GroupMember();
         groupMember.setAppGroup(group); // разобраться с тем, если такая запись с таким человеком и группой существует
         groupMember.setAppUser(user);

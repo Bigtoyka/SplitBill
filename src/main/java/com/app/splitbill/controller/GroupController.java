@@ -29,8 +29,8 @@ public class GroupController {
         return groupService.getGroupById(id);
     }
 
-    @PostMapping("/{groupId}/members/{userId}")
-    public GroupMember addMemberToGroup(@PathVariable Long groupId, @PathVariable Long userId) {
-        return groupService.addMemberToGroup(groupId, userId);
+    @PostMapping("/{groupName}/members/{username}")
+    public GroupMember addMemberToGroup(@PathVariable String groupName, @PathVariable String username) {
+        return groupService.addMemberToGroup(groupName, username);
     }
 }
