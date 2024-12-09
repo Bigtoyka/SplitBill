@@ -7,11 +7,12 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class DebtDto {
-    private String debtorName;
-    private BigDecimal amount;
+public class SharedBillItemRequestDto {
+    private Long billId;
+    private String itemName;
+    private BigDecimal itemPrice;
 }

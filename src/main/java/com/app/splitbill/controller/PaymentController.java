@@ -1,5 +1,6 @@
 package com.app.splitbill.controller;
 
+import com.app.splitbill.dto.PaymentRequestDto;
 import com.app.splitbill.model.Payment;
 import com.app.splitbill.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,18 +21,20 @@ public class PaymentController {
     private PaymentService paymentService;
 
     @PostMapping
-    public Payment createPayment(@RequestBody Payment payment) {
-        return paymentService.createPayment(payment);
+    public Payment createPayment(@RequestBody PaymentRequestDto paymentRequestDto) {
+        return paymentService.createPayment(paymentRequestDto);
     }
 
     @GetMapping("/{id}")
     public Payment getPaymentById(@PathVariable Long id) {
         return paymentService.getPaymentById(id);
     }
+
     @PutMapping("/{id}")
-    public Payment updatePayment(@PathVariable Long id, @RequestBody Payment payment) {
-        return paymentService.updatePayment(id, payment);
+    public Payment updatePayment(@PathVariable Long id, @RequestBody PaymentRequestDto paymentRequestDto) {
+        return paymentService.updatePayment(id, paymentRequestDto);
     }
+
     @DeleteMapping("/{id}")
     public void deletePayment(@PathVariable Long id) {
         paymentService.deletePayment(id);

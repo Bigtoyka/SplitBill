@@ -1,9 +1,10 @@
 package com.app.splitbill.service;
 
+import com.app.splitbill.dto.PaymentRequestDto;
+import com.app.splitbill.exception.ResourceNotFoundException;
+import com.app.splitbill.exception.ValidationException;
 import com.app.splitbill.model.AppUser;
 import com.app.splitbill.model.Payment;
-import com.app.splitbill.repository.BillRepository;
-import com.app.splitbill.repository.GroupMemberRepository;
 import com.app.splitbill.repository.PaymentRepository;
 import com.app.splitbill.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -13,41 +14,59 @@ import org.springframework.stereotype.Service;
 public class PaymentService {
     private PaymentRepository paymentRepository;
     private UserRepository userRepository;
-    private BillRepository billRepository;
-    private GroupMemberRepository groupMemberRepository;
 
-    public PaymentService(PaymentRepository paymentRepository, UserRepository userRepository, BillRepository billRepository, GroupMemberRepository groupMemberRepository) {
+    public PaymentService(PaymentRepository paymentRepository, UserRepository userRepository) {
         this.paymentRepository = paymentRepository;
         this.userRepository = userRepository;
-        this.billRepository = billRepository;
-        this.groupMemberRepository = groupMemberRepository;
     }
 
-    public Payment createPayment(Payment payment) {
+    public Payment createPayment(PaymentRequestDto paymentRequestDto) {
+        AppUser payer = userRepository.findByUsername(paymentRequestDto.getPayerUsername())
+                .orElseThrow(() -> new ResourceNotFoundException("Payer not found with username: " + paymentRequestDto.getPayerUsername()));
+        AppUser payee = userRepository.findByUsername(paymentRequestDto.getPayeeUsername())
+                .orElseThrow(() -> new ResourceNotFoundException("Payee not found with username: " + paymentRequestDto.getPayeeUsername()));
+        if (payer.equals(payee)) {
+            throw new ValidationException("Payer and payee cannot be the same user");
+        }
+        Payment payment = new Payment();
+        payment.setPayer(payer);
+        payment.setPayee(payee);
+        payment.setAmount(paymentRequestDto.getAmount());
+
         return paymentRepository.save(payment);
     }
 
     public Payment getPaymentById(Long id) {
-        return paymentRepository.findById(id).orElse(null);
+        return paymentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Payment not found with id: " + id));
     }
 
-    public Payment updatePayment(Long id, Payment payment) {
+    public Payment updatePayment(Long id, PaymentRequestDto paymentRequestDto) {
         Payment existingPayment = paymentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Payment not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Payment not found with id: " + id));
 
-        AppUser payer = userRepository.findById(payment.getPayer().getId())
-                .orElseThrow(() -> new RuntimeException("Payer not found"));
-        AppUser payee = userRepository.findById(payment.getPayee().getId())
-                .orElseThrow(() -> new RuntimeException("Payee not found"));
+        AppUser payer = userRepository.findByUsername(paymentRequestDto.getPayerUsername())
+                .orElseThrow(() -> new ResourceNotFoundException("Payer not found with username: " + paymentRequestDto.getPayerUsername()));
+
+        AppUser payee = userRepository.findByUsername(paymentRequestDto.getPayeeUsername())
+                .orElseThrow(() -> new ResourceNotFoundException("Payee not found with username: " + paymentRequestDto.getPayeeUsername()));
+
+        if (payer.equals(payee)) {
+            throw new ValidationException("Payer and payee cannot be the same user");
+        }
 
         existingPayment.setPayer(payer);
         existingPayment.setPayee(payee);
-        existingPayment.setAmount(payment.getAmount());
+        existingPayment.setAmount(paymentRequestDto.getAmount());
 
         return paymentRepository.save(existingPayment);
     }
 
+
     public void deletePayment(Long id) {
+        if (!paymentRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Payment not found with id: " + id);
+        }
         paymentRepository.deleteById(id);
     }
 

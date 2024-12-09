@@ -1,5 +1,6 @@
 package com.app.splitbill.service;
 
+import com.app.splitbill.exception.ResourceNotFoundException;
 import com.app.splitbill.model.AppUser;
 import com.app.splitbill.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ public class UserService {
     }
 
     public AppUser getUserById(Long id) {
-        return userRepository.findById(id).orElse(null);
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
     }
 }

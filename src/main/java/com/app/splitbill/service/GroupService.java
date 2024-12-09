@@ -1,5 +1,7 @@
 package com.app.splitbill.service;
 
+import com.app.splitbill.exception.ResourceNotFoundException;
+import com.app.splitbill.exception.ValidationException;
 import com.app.splitbill.model.AppGroup;
 import com.app.splitbill.model.AppUser;
 import com.app.splitbill.model.GroupMember;
@@ -23,23 +25,29 @@ public class GroupService {
     public String createGroup(AppGroup appGroup) {
         boolean groupExists = groupRepository.existsByName(appGroup.getName());
         if (groupExists) {
-            return "Group with this name already exists";
+            throw new ValidationException("Group with this name already exists");
         }
         groupRepository.save(appGroup);
         return "You have created a new group";
     }
 
     public AppGroup getGroupById(Long id) {
-        return groupRepository.findById(id).orElse(null);
+        return groupRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Group not found with id: " + id));
     }
 
     public GroupMember addMemberToGroup(String groupName, String username) {
         AppGroup group = groupRepository.findByName(groupName)
-                .orElseThrow(() -> new RuntimeException("Group not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Group not found with name: " + groupName));
+
         AppUser user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with username: " + username));
+        boolean isAlreadyMember = groupMemberRepository.existsByAppGroupAndAppUser(group, user);
+        if (isAlreadyMember) {
+            throw new ValidationException("User is already a member of this group");
+        }
         GroupMember groupMember = new GroupMember();
-        groupMember.setAppGroup(group); // разобраться с тем, если такая запись с таким человеком и группой существует
+        groupMember.setAppGroup(group);
         groupMember.setAppUser(user);
         return groupMemberRepository.save(groupMember);
     }

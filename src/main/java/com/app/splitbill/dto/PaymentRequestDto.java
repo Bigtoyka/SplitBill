@@ -11,7 +11,8 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class DebtDto {
-    private String debtorName;
+public class PaymentRequestDto {
+    private String payerUsername;
+    private String payeeUsername;
     private BigDecimal amount;
 }
