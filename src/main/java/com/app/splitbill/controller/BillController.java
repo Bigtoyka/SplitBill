@@ -6,7 +6,6 @@ import com.app.splitbill.dto.DebtDto;
 import com.app.splitbill.dto.SharedBillItemRequestDto;
 import com.app.splitbill.model.Bill;
 import com.app.splitbill.model.BillItem;
-import com.app.splitbill.model.BillParticipant;
 import com.app.splitbill.service.BillService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/bills")
@@ -28,8 +26,9 @@ public class BillController {
     private final BillService billService;
 
     @PostMapping("/create")
-    public Bill createBill(@RequestBody BillRequestDto billRequestDto) {
-        return billService.createBillFromRequest(billRequestDto);
+    public ResponseEntity<String> createBill(@RequestBody BillRequestDto billRequestDto) {
+        billService.createBillFromRequest(billRequestDto);
+        return ResponseEntity.ok("Bill added successfully");
     }
 
     @GetMapping("/{id}")
@@ -38,15 +37,16 @@ public class BillController {
     }
 
     @PostMapping("/{billId}/items")
-    public BillItem addBillItem(@PathVariable Long billId, @RequestBody BillItem billItem) {
-        return billService.addBillItem(billId, billItem);
+    public ResponseEntity<String> addBillItem(@PathVariable Long billId, @RequestBody BillItem billItem) {
+        billService.addBillItem(billId, billItem);
+        return ResponseEntity.ok("Item added successfully in bill " + billId);
     }
 
     @PostMapping("/items/participants")
-    public BillParticipant addBillParticipant(@RequestBody BillParticipantRequestDto participantDto) {
-        return billService.addBillParticipantByDetails(participantDto);
+    public ResponseEntity<String> addBillParticipant(@RequestBody BillParticipantRequestDto participantDto) {
+        billService.addBillParticipantByDetails(participantDto);
+        return ResponseEntity.ok(participantDto.getItemName() + " add in bill " + participantDto.getBillId() + " in group " + participantDto.getGroupName());
     }
-
 
     @GetMapping("/{billId}/debts")
     public List<DebtDto> calculateDebtsByConsumption(@PathVariable Long billId) {
@@ -57,5 +57,10 @@ public class BillController {
     public ResponseEntity<String> addSharedBillItem(@RequestBody SharedBillItemRequestDto requestDto) {
         billService.addSharedBillItem(requestDto.getBillId(), requestDto.getItemName(), requestDto.getItemPrice());
         return ResponseEntity.ok("Shared bill item added successfully");
+    }
+
+    @GetMapping("/group/{groupName}/debts")
+    public List<DebtDto> getGroupDebts(@PathVariable String groupName) {
+        return billService.calculateGroupDebts(groupName);
     }
 }

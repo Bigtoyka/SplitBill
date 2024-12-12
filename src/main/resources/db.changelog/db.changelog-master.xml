@@ -7,7 +7,7 @@
 
     <changeSet author="Michael" id="1">
         <createTable tableName="app_group">
-            <column name="id" type="bigint">
+            <column name="id" type="bigserial">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="name" type="varchar(255)">
@@ -16,7 +16,7 @@
         </createTable>
 
         <createTable tableName="app_user">
-            <column name="id" type="bigint">
+            <column name="id" type="bigserial">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="username" type="varchar(255)">
@@ -31,8 +31,11 @@
         </createTable>
 
         <createTable tableName="bill">
-            <column name="id" type="bigint">
+            <column name="id" type="bigserial">
                 <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="group_id" type="bigint">
+                <constraints nullable="false"/>
             </column>
             <column name="total_amount" type="decimal(19, 2)">
                 <constraints nullable="false"/>
@@ -50,7 +53,7 @@
         </createTable>
 
         <createTable tableName="bill_item">
-            <column name="id" type="bigint">
+            <column name="id" type="bigserial">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="bill_id" type="bigint">
@@ -65,7 +68,7 @@
         </createTable>
 
         <createTable tableName="bill_participant">
-            <column name="id" type="bigint">
+            <column name="id" type="bigserial">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="bill_item_id" type="bigint">
@@ -83,7 +86,7 @@
         </createTable>
 
         <createTable tableName="group_member">
-            <column name="id" type="bigint">
+            <column name="id" type="bigserial">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="user_id" type="bigint">
@@ -95,7 +98,7 @@
         </createTable>
 
         <createTable tableName="payment">
-            <column name="id" type="bigint">
+            <column name="id" type="bigserial">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="payer_id" type="bigint"/>
@@ -107,6 +110,11 @@
     </changeSet>
 
     <changeSet author="Michael" id="2">
+        <addForeignKeyConstraint
+                baseTableName="bill" baseColumnNames="group_id"
+                referencedTableName="app_group" referencedColumnNames="id"
+                constraintName="fk_bill_group"/>
+
         <addForeignKeyConstraint
                 baseTableName="bill" baseColumnNames="created_by"
                 referencedTableName="app_user" referencedColumnNames="id"

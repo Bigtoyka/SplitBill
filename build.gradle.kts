@@ -1,9 +1,11 @@
 plugins {
     java
     war
+    jacoco
     id("org.springframework.boot") version "3.3.5"
     id("io.spring.dependency-management") version "1.1.6"
 }
+
 
 group = "com.app"
 version = "0.0.1-SNAPSHOT"
@@ -38,6 +40,7 @@ dependencies {
     implementation("org.liquibase:liquibase-core:4.30.0")
 
 }
+
 
 tasks.withType<Test> {
     useJUnitPlatform()

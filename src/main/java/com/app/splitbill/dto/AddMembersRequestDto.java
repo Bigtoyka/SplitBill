@@ -5,17 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BillParticipantRequestDto {
-    private Long billId;
-    private String itemName;
+public class AddMembersRequestDto {
     private String groupName;
-    private String username;
-    private BigDecimal amountOwed;
-    private BigDecimal amountPaid;
+    private List<String> usernames;
 }

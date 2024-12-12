@@ -3,6 +3,7 @@ package com.app.splitbill.controller;
 import com.app.splitbill.model.AppUser;
 import com.app.splitbill.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,8 +18,10 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/create")
-    public AppUser createUser(@RequestBody AppUser appUser) {
-        return userService.createUser(appUser);
+    public ResponseEntity<String> createUser(@RequestBody AppUser appUser) {
+        userService.createUser(appUser);
+        return ResponseEntity.ok("User create successfully: " + appUser.getUsername());
+
     }
 
     @GetMapping("/{id}")
