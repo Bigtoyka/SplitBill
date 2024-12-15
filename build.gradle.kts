@@ -38,6 +38,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     implementation("org.liquibase:liquibase-core:4.30.0")
+    implementation("org.springframework.boot:spring-boot-starter-mail:3.4.0")
 
 }
 
