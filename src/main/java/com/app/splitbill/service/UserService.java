@@ -6,9 +6,10 @@ import com.app.splitbill.repository.BillParticipantRepository;
 import com.app.splitbill.repository.GroupMemberRepository;
 import com.app.splitbill.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
+@RequiredArgsConstructor
 @Slf4j
 @Service
 public class UserService {
@@ -16,11 +17,6 @@ public class UserService {
     private final BillParticipantRepository billParticipantRepository;
     private final GroupMemberRepository groupMemberRepository;
 
-    public UserService(UserRepository userRepository, BillParticipantRepository billParticipantRepository, GroupMemberRepository groupMemberRepository) {
-        this.userRepository = userRepository;
-        this.billParticipantRepository = billParticipantRepository;
-        this.groupMemberRepository = groupMemberRepository;
-    }
 
     public AppUser createUser(AppUser appUser) {
         log.info("Attempting to create user with username: {}", appUser.getUsername());
