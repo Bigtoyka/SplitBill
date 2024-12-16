@@ -61,4 +61,10 @@ public class GroupService {
         log.info("User '{}' added to group '{}'", username, groupName);
         return groupMemberRepository.save(groupMember);
     }
+    public void removeUserFromGroup(String username, String groupName) {
+        log.info("Attempting to remove user '{}' from group '{}'", username, groupName);
+        groupMemberRepository.deleteByUsernameAndGroupName(username, groupName);
+        log.info("User '{}' removed from group '{}'", username, groupName);
+    }
+
 }

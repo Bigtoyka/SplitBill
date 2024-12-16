@@ -18,6 +18,7 @@ import com.app.splitbill.repository.BillParticipantRepository;
 import com.app.splitbill.repository.UserRepository;
 import com.app.splitbill.repository.GroupRepository;
 import com.app.splitbill.repository.GroupMemberRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,7 @@ import java.util.HashMap;
 import java.util.Collections;
 import java.util.ArrayList;
 
+@RequiredArgsConstructor
 @Slf4j
 @Service
 public class BillService {
@@ -39,14 +41,6 @@ public class BillService {
     private final GroupRepository groupRepository;
     private final GroupMemberRepository groupMemberRepository;
 
-    public BillService(BillRepository billRepository, BillItemRepository billItemRepository, BillParticipantRepository billParticipantRepository, UserRepository userRepository, GroupRepository groupRepository, GroupMemberRepository groupMemberRepository) {
-        this.billRepository = billRepository;
-        this.billItemRepository = billItemRepository;
-        this.billParticipantRepository = billParticipantRepository;
-        this.userRepository = userRepository;
-        this.groupRepository = groupRepository;
-        this.groupMemberRepository = groupMemberRepository;
-    }
 
     public Bill createBillFromRequest(BillRequestDto billRequestDto) {
         log.info("Creating bill from request: {}", billRequestDto);
