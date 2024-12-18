@@ -24,5 +24,9 @@ public interface GroupMemberRepository extends JpaRepository<GroupMember, Long> 
     @Modifying
     @Query("DELETE FROM GroupMember gm WHERE gm.appUser.username = :username AND gm.appGroup.name = :groupName")
     void deleteByUsernameAndGroupName(@Param("username") String username, @Param("groupName") String groupName);
+    @Query("SELECT gm.appGroup FROM GroupMember gm WHERE gm.appUser.username = :username")
+    List<AppGroup> findGroupsByUsername(@Param("username") String username);
+    @Query("SELECT gm.appUser FROM GroupMember gm WHERE gm.appGroup.name = :groupName")
+    List<AppUser> findUsersByGroupName(@Param("groupName") String groupName);
 
 }
