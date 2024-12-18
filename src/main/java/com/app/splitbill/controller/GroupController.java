@@ -1,16 +1,12 @@
 package com.app.splitbill.controller;
 
+import com.app.splitbill.dto.AddMembersRequestDto;
+import com.app.splitbill.dto.RemoveUserFromGroupRequest;
 import com.app.splitbill.model.AppGroup;
-import com.app.splitbill.model.GroupMember;
 import com.app.splitbill.service.GroupService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,7 +16,7 @@ public class GroupController {
 
     @PostMapping("/create")
     public String createGroup(@RequestBody AppGroup appGroup) {
-        return groupService.createGroup(appGroup);
+        return groupService.createGroup(appGroup) + ": " + appGroup.getName();
     }
 
     @GetMapping("/{id}")
@@ -29,7 +25,16 @@ public class GroupController {
     }
 
     @PostMapping("/members")
-    public GroupMember addMemberToGroup(@RequestParam String groupName, @RequestParam String username) {
-        return groupService.addMemberToGroup(groupName, username);
+    public ResponseEntity<String> addMembersToGroup(@RequestBody AddMembersRequestDto request) {
+        for (String username : request.getUsernames()) {
+            groupService.addMemberToGroup(request.getGroupName(), username);
+        }
+        return ResponseEntity.ok("Users added to the group successfully");
+    }
+
+    @DeleteMapping("/members")
+    public ResponseEntity<String> removeUserFromGroup(@RequestBody RemoveUserFromGroupRequest request) {
+        groupService.removeUserFromGroup(request.getUsername(), request.getGroupName());
+        return ResponseEntity.ok("User " + request.getUsername() + " removed from group " + request.getGroupName());
     }
 }

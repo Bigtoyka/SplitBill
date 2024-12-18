@@ -13,5 +13,6 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class DebtDto {
     private String debtorName;
+    private String creditorName;
     private BigDecimal amount;
 }
