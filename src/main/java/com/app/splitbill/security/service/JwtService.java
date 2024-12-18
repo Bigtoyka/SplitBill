@@ -4,14 +4,18 @@ import com.app.splitbill.model.Role;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
 @Service
 public class JwtService {
-    private final String secretKey = "your-secure-secret-key";
+    private final String secretKey;
 
+    public JwtService(@Value("${jwt.secret}") String secretKey) {
+        this.secretKey = secretKey;
+    }
     public String generateToken(String email, Role role) {
         return JWT.create()
                 .withSubject(email)

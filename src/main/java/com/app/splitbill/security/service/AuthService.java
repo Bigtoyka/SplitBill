@@ -3,6 +3,7 @@ package com.app.splitbill.security.service;
 import com.app.splitbill.model.AppUser;
 import com.app.splitbill.model.Role;
 import com.app.splitbill.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,6 +17,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
+    @Transactional
     public String register(String username, String email, String password, Role role) {
         if (userRepository.findByEmail(email).isPresent()) {
             throw new IllegalArgumentException("Email already in use");
@@ -26,6 +28,7 @@ public class AuthService {
         return jwtService.generateToken(user.getEmail(), user.getRole());
     }
 
+    @Transactional
     public String authenticate(String email, String password) {
         AppUser user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
