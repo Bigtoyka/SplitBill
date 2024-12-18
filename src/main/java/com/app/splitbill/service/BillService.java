@@ -18,6 +18,8 @@ import com.app.splitbill.repository.BillParticipantRepository;
 import com.app.splitbill.repository.UserRepository;
 import com.app.splitbill.repository.GroupRepository;
 import com.app.splitbill.repository.GroupMemberRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +31,7 @@ import java.util.HashMap;
 import java.util.Collections;
 import java.util.ArrayList;
 
+@RequiredArgsConstructor
 @Slf4j
 @Service
 public class BillService {
@@ -39,15 +42,7 @@ public class BillService {
     private final GroupRepository groupRepository;
     private final GroupMemberRepository groupMemberRepository;
 
-    public BillService(BillRepository billRepository, BillItemRepository billItemRepository, BillParticipantRepository billParticipantRepository, UserRepository userRepository, GroupRepository groupRepository, GroupMemberRepository groupMemberRepository) {
-        this.billRepository = billRepository;
-        this.billItemRepository = billItemRepository;
-        this.billParticipantRepository = billParticipantRepository;
-        this.userRepository = userRepository;
-        this.groupRepository = groupRepository;
-        this.groupMemberRepository = groupMemberRepository;
-    }
-
+    @Transactional
     public Bill createBillFromRequest(BillRequestDto billRequestDto) {
         log.info("Creating bill from request: {}", billRequestDto);
         AppUser createdBy = userRepository.findByUsername(billRequestDto.getCreatedBy())
@@ -90,7 +85,7 @@ public class BillService {
         return savedItem;
     }
 
-
+    @Transactional
     public BillParticipant addBillParticipantByDetails(BillParticipantRequestDto participantDto) {
         log.info("Adding participant to bill: {}", participantDto);
         AppGroup appGroup = groupRepository.findByName(participantDto.getGroupName())
@@ -125,7 +120,7 @@ public class BillService {
         return savedParticipant;
     }
 
-
+    @Transactional
     public List<DebtDto> calculateDebtBasedOnConsumption(Long billId) {
         log.info("Calculating debts for bill ID: {}", billId);
 
@@ -163,7 +158,7 @@ public class BillService {
         return debts;
     }
 
-    // общее блюдо
+    @Transactional
     public void addSharedBillItem(Long billId, String itemName, BigDecimal itemPrice) {
         log.info("Adding shared bill item: {}, price: {} to bill ID: {}", itemName, itemPrice, billId);
         Bill bill = billRepository.findById(billId)
@@ -205,6 +200,7 @@ public class BillService {
         }
     }
 
+    @Transactional
     public List<DebtDto> calculateGroupDebts(String groupName) {
         log.info("Calculating group debts for group: {}", groupName);
         AppGroup group = groupRepository.findByName(groupName)

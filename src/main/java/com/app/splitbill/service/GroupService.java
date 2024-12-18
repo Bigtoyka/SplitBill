@@ -8,9 +8,11 @@ import com.app.splitbill.model.GroupMember;
 import com.app.splitbill.repository.GroupMemberRepository;
 import com.app.splitbill.repository.GroupRepository;
 import com.app.splitbill.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@RequiredArgsConstructor
 @Slf4j
 @Service
 public class GroupService {
@@ -18,11 +20,6 @@ public class GroupService {
     private final GroupMemberRepository groupMemberRepository;
     private final UserRepository userRepository;
 
-    public GroupService(GroupRepository groupRepository, GroupMemberRepository groupMemberRepository, UserRepository userRepository) {
-        this.groupRepository = groupRepository;
-        this.groupMemberRepository = groupMemberRepository;
-        this.userRepository = userRepository;
-    }
 
     public String createGroup(AppGroup appGroup) {
         log.info("Attempting to create group with name: {}", appGroup.getName());
@@ -61,4 +58,11 @@ public class GroupService {
         log.info("User '{}' added to group '{}'", username, groupName);
         return groupMemberRepository.save(groupMember);
     }
+
+    public void removeUserFromGroup(String username, String groupName) {
+        log.info("Attempting to remove user '{}' from group '{}'", username, groupName);
+        groupMemberRepository.deleteByUsernameAndGroupName(username, groupName);
+        log.info("User '{}' removed from group '{}'", username, groupName);
+    }
+
 }
